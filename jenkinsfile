@@ -1,0 +1,63 @@
+pipeline {
+    agent any
+
+    environment {
+        REGISTRY = 'https://index.docker.io/v1/'
+        IMAGE_NAME = 'vaidehi/swecon18testing'
+        TAG = '1.0'
+        // Adding your custom environment variables
+        VITE_API_URL = 'http://localhost:8080'
+        VITE_PATIENT_URL = 'http://localhost:5511'
+        VITE_DOCTOR_URL = 'http://localhost:5513'
+        VITE_DOMAIN = 'carelyo.top'
+        PORT = '5510'
+        GENERATE_SOURCEMAP = 'false'
+        VITE_SLOGAN = 'add_slogan'
+        VITE_SYSADMIN_URL = 'http://localhost:5516'
+        VITE_TITLE = 'add_provider_title'
+        VITE_CLIENT_URL = 'link_provider_website'
+        VITE_CARELYO_URL = 'https://carelyo.com'
+        VITE_GOOGLE_CLIENT_ID = '794623894467-1aa200c1jjsu5hj84u7cqe9d5chb3lc6.apps.googleusercontent.com'
+        VITE_PROVIDER_NAME = 'Trinity Care'
+        VITE_PROVIDER_COUNTRY = 'Nigeria'
+        VITE_BACKGROUND_IMAGE_URL = 'public/assets/images/drike.jpg'
+    }
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                git url: 'https://github.com/Carelyo/login-tester.git', branch: 'develop'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    try {
+                        def image = docker.build("${IMAGE_NAME}:${TAG}")
+                        echo "Docker image ${IMAGE_NAME}:${TAG} built successfully."
+                    } catch (Exception e) {
+                        error "Failed to build Docker image: ${e.message}"
+                    }
+                }
+            }
+        }
+
+        stage('Push Docker Image to DockerHub') {
+            steps {
+                script {
+                    // Using `withCredentials` block to handle DockerHub credentials securely
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                        // Passing the credentials as environment variables to the shell command
+                        sh """
+                            echo "\$DOCKER_PASS" | docker login -u "\$DOCKER_USER" --password-stdin
+                            docker push "\$IMAGE_NAME:\$TAG"
+                            docker logout
+                        """
+                        echo "Docker image ${IMAGE_NAME}:${TAG} pushed to DockerHub successfully."
+                    }
+                }
+            }
+        }
+    }
+}
