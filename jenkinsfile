@@ -6,7 +6,7 @@ pipeline {
         IMAGE_NAME = 'vaidehi/swecon18testing'
         TAG = '1.0'
         // Adding your custom environment variables
-        VITE_API_URL = 'http://localhost:8081'
+        VITE_API_URL = 'http://localhost:8080'
         VITE_PATIENT_URL = 'http://localhost:5511'
         VITE_DOCTOR_URL = 'http://localhost:5513'
         VITE_DOMAIN = 'carelyo.top'
@@ -54,12 +54,14 @@ pipeline {
                     withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                         // Passing the credentials as environment variables to the shell command
                         // Print username for verification
-                        echo "Using DockerHub username: ${DOCKER_USER}"
+                        echo "Logging into DockerHub with user: ${DOCKER_USER}"
 
                         sh """
-                            docker login -u "\$DOCKER_USER" -p "\$DOCKER_PASS"
-                            docker push ${IMAGE_NAME}:${TAG} || exit 1
+                            echo "\$DOCKER_PASS" | docker login -u "\$DOCKER_USER" --password-stdin
+                            docker tag ${IMAGE_NAME}:${TAG} vaidehibhambure/${IMAGE_NAME}:${TAG}
+                            docker push vaidehibhambure/${IMAGE_NAME}:${TAG}
                             docker logout
+                        
                         """
                         echo "Docker image ${IMAGE_NAME}:${TAG} pushed to DockerHub successfully."
                     }
