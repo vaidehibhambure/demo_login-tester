@@ -26,7 +26,7 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                git url: 'https://github.com/Carelyo/login-tester.git', branch: 'develop'
+                git url: 'https://github.com/vaidehibhambure/demo_login-tester.git', branch: 'main'
             }
         }
 
@@ -51,7 +51,7 @@ pipeline {
                         // Passing the credentials as environment variables to the shell command
                         // Print username for verification
                         echo "Using DockerHub username: ${DOCKER_USER}"
-                        
+
                         sh """
                             echo "\$DOCKER_PASS" | docker login -u "\$DOCKER_USER" --password-stdin
                             docker push "\$IMAGE_NAME:\$TAG"
