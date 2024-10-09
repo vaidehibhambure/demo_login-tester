@@ -58,7 +58,7 @@ pipeline {
 
                         sh """
                             echo "\$DOCKER_PASS" | docker login -u "\$DOCKER_USER" --password-stdin
-                            docker tag ${IMAGE_NAME}:${TAG} vaidehibhambure/${IMAGE_NAME}:${TAG}
+                            docker tag ${IMAGE_NAME}:${TAG} vaidehibhambure/demo-login-tester:${TAG}
                             docker push vaidehibhambure/${IMAGE_NAME}:${TAG}
                             docker logout
                         
