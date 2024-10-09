@@ -49,6 +49,9 @@ pipeline {
                     // Using `withCredentials` block to handle DockerHub credentials securely
                     withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                         // Passing the credentials as environment variables to the shell command
+                        // Print username for verification
+                        echo "Using DockerHub username: ${DOCKER_USER}"
+                        
                         sh """
                             echo "\$DOCKER_PASS" | docker login -u "\$DOCKER_USER" --password-stdin
                             docker push "\$IMAGE_NAME:\$TAG"
