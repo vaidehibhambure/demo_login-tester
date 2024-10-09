@@ -6,7 +6,7 @@ pipeline {
         IMAGE_NAME = 'vaidehi/swecon18testing'
         TAG = '1.0'
         // Adding your custom environment variables
-        VITE_API_URL = 'http://localhost:8080'
+        VITE_API_URL = 'http://localhost:8081'
         VITE_PATIENT_URL = 'http://localhost:5511'
         VITE_DOCTOR_URL = 'http://localhost:5513'
         VITE_DOMAIN = 'carelyo.top'
@@ -36,6 +36,10 @@ pipeline {
                     try {
                         def image = docker.build("${IMAGE_NAME}:${TAG}")
                         echo "Docker image ${IMAGE_NAME}:${TAG} built successfully."
+
+                        // Verify image exists
+                        sh "docker images | grep ${IMAGE_NAME}"
+
                     } catch (Exception e) {
                         error "Failed to build Docker image: ${e.message}"
                     }
