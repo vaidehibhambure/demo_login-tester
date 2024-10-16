@@ -32,12 +32,13 @@
     "node": ">=16.0.0"
   },
   "scripts": {
-    "test":"playwright test",
+    "test": "playwright test",
     "dev": "vite --host",
     "build": "vite build",
     "preview": "vite preview",
     "release": "release-it",
-    "prettier-watch": "onchange \"**/*\" -- prettier --write --ignore-unknown {{changed}}"
+    "prettier-watch": "onchange \"**/*\" -- prettier --write --ignore-unknown {{changed}}",
+    "start": "node server.js"
   },
   "browserslist": {
     "production": [
